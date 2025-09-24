@@ -1,0 +1,3 @@
+"id_prestamo","id_libro","fecha_prestamo","fecha_devolucion","usuario_prestatario"
+2,3,"2025-09-05",NULL,"Carlos Gómez"
+4,7,"2025-09-10",NULL,"Miguel Torres"

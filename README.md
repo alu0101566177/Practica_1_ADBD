@@ -50,28 +50,27 @@ FROM pg_roles;
 
 Resultado:
 
-```csv
-"rolname","rolsuper","rolcreaterole","rolcreatedb","rolcanlogin"
-"pg_database_owner",False,False,False,False
-"pg_read_all_data",False,False,False,False
-"pg_write_all_data",False,False,False,False
-"pg_monitor",False,False,False,False
-"pg_read_all_settings",False,False,False,False
-"pg_read_all_stats",False,False,False,False
-"pg_stat_scan_tables",False,False,False,False
-"pg_read_server_files",False,False,False,False
-"pg_write_server_files",False,False,False,False
-"pg_execute_server_program",False,False,False,False
-"pg_signal_backend",False,False,False,False
-"pg_checkpoint",False,False,False,False
-"pg_maintain",False,False,False,False
-"pg_use_reserved_connections",False,False,False,False
-"pg_create_subscription",False,False,False,False
-"mi_usuario",True,True,True,True
-"admin_biblio",False,False,False,True
-"usuario_biblio",False,False,False,True
-"lectores",False,False,False,False
-```
+| rolname                     | rolsuper | rolcreaterole | rolcreatedb | rolcanlogin |
+| --------------------------- | -------- | ------------- | ----------- | ----------- |
+| pg_database_owner           | False    | False         | False       | False       |
+| pg_read_all_data            | False    | False         | False       | False       |
+| pg_write_all_data           | False    | False         | False       | False       |
+| pg_monitor                  | False    | False         | False       | False       |
+| pg_read_all_settings        | False    | False         | False       | False       |
+| pg_read_all_stats           | False    | False         | False       | False       |
+| pg_stat_scan_tables         | False    | False         | False       | False       |
+| pg_read_server_files        | False    | False         | False       | False       |
+| pg_write_server_files       | False    | False         | False       | False       |
+| pg_execute_server_program   | False    | False         | False       | False       |
+| pg_signal_backend           | False    | False         | False       | False       |
+| pg_checkpoint               | False    | False         | False       | False       |
+| pg_maintain                 | False    | False         | False       | False       |
+| pg_use_reserved_connections | False    | False         | False       | False       |
+| pg_create_subscription      | False    | False         | False       | False       |
+| mi_usuario                  | True     | True          | True        | True        |
+| admin_biblio                | False    | False         | False       | True        |
+| usuario_biblio              | False    | False         | False       | True        |
+| lectores                    | False    | False         | False       | False       |
 
 ### 2e. Editar la contraseña de usuario_biblio
 
@@ -152,3 +151,84 @@ INSERT INTO prestamos (id_libro, fecha_prestamo, fecha_devolucion, usuario_prest
 SELECT titulo, nombre
 FROM libros NATURAL JOIN autores;
 ```
+
+Resultado:
+
+| Título                            | Nombre                 |
+| --------------------------------- | ---------------------- |
+| Cien años de soledad              | Gabriel García Márquez |
+| El amor en los tiempos del cólera | Gabriel García Márquez |
+| La casa de los espíritus          | Isabel Allende         |
+| Paula                             | Isabel Allende         |
+| Ficciones                         | Jorge Luis Borges      |
+| La ciudad y los perros            | Mario Vargas Llosa     |
+| Conversación en La Catedral       | Mario Vargas Llosa     |
+| Rayuela                           | Julio Cortázar         |
+
+### 5b. Mostrar los préstamos que aún no tienen fecha de devolución.
+
+```sql
+SELECT *
+FROM prestamos
+WHERE fecha_devolucion IS NULL;
+```
+
+Resultado:
+
+| id_prestamo | id_libro | fecha_prestamo | fecha_devolucion | usuario_prestatario |
+| ----------- | -------- | -------------- | ---------------- | ------------------- |
+| 2           | 3        | 2025-09-05     | NULL             | Carlos Gómez        |
+| 4           | 7        | 2025-09-10     | NULL             | Miguel Torres       |
+
+### 5c. Obtener los autores que tienen más de un libro registrado.
+
+```sql
+SELECT nombre
+FROM (
+  SELECT id_autor
+  FROM autores NATURAL JOIN libros
+  GROUP BY id_autor
+  HAVING COUNT(*) > 1)
+ NATURAL JOIN autores;
+```
+
+Resultado:
+
+| nombre                 |
+| ---------------------- |
+| Gabriel García Márquez |
+| Isabel Allende         |
+| Mario Vargas Llosa     |
+
+## 6. Consultas con agregación
+
+### 6a. Calcular el número total de préstamos realizados.
+
+```sql
+SELECT COUNT(*) num_prestamos
+FROM prestamos;
+```
+
+Resultado:
+
+| num_prestamos |
+| ------------- |
+| 5             |
+
+### 6b. Obtener el número de libros prestados por cada usuario.
+
+```sql
+SELECT usuario_prestatario, COUNT(*)
+FROM prestamos
+GROUP BY usuario_prestatario;
+```
+
+Resultado:
+
+| usuario_prestatario | count |
+| ------------------- | ----- |
+| Lucía Fernández     | 1     |
+| Ana Pérez           | 1     |
+| Miguel Torres       | 1     |
+| Sofía Ramírez       | 1     |
+| Carlos Gómez        | 1     |
