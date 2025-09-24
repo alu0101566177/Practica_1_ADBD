@@ -232,3 +232,39 @@ Resultado:
 | Miguel Torres       | 1     |
 | Sofía Ramírez       | 1     |
 | Carlos Gómez        | 1     |
+
+## 7. Modificación de datos
+
+### 7a. Actualizar la fecha de devolución de un préstamo pendiente.
+
+```sql
+UPDATE prestamos
+SET fecha_devolucion = CURRENT_DATE
+WHERE id_prestamo = 2;
+```
+
+Tabla modificada:
+
+| id_prestamo | id_libro | fecha_prestamo | fecha_devolucion | usuario_prestatario |
+| ----------- | -------- | -------------- | ---------------- | ------------------- |
+| 1           | 1        | 2025-09-01     | 2025-09-15       | Ana Pérez           |
+| 3           | 5        | 2025-09-07     | 2025-09-20       | Lucía Fernández     |
+| 4           | 7        | 2025-09-10     | NULL             | Miguel Torres       |
+| 5           | 8        | 2025-09-12     | 2025-09-22       | Sofía Ramírez       |
+| 2           | 3        | 2025-09-05     | 2025-09-24       | Carlos Gómez        |
+
+### 7b. Eliminar un libro y comprobar el efecto en la tabla de préstamos (usar ON DELETE CASCADE o justificar el comportamiento).
+
+```sql
+DELETE FROM libros
+WHERE id_libro=1;
+```
+
+Tabla modificada (prestamos):
+
+| id_prestamo | id_libro | fecha_prestamo | fecha_devolucion | usuario_prestatario |
+| ----------- | -------- | -------------- | ---------------- | ------------------- |
+| 3           | 5        | 2025-09-07     | 2025-09-20       | Lucía Fernández     |
+| 4           | 7        | 2025-09-10     | NULL             | Miguel Torres       |
+| 5           | 8        | 2025-09-12     | 2025-09-22       | Sofía Ramírez       |
+| 2           | 3        | 2025-09-05     | 2025-09-24       | Carlos Gómez        |
