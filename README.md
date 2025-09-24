@@ -268,3 +268,79 @@ Tabla modificada (prestamos):
 | 4           | 7        | 2025-09-10     | NULL             | Miguel Torres       |
 | 5           | 8        | 2025-09-12     | 2025-09-22       | Sofía Ramírez       |
 | 2           | 3        | 2025-09-05     | 2025-09-24       | Carlos Gómez        |
+
+## 8. Creación de vistas
+
+### 8a. Crear una vista llamada vista_libros_prestados que muestre: título del libro, autor y nombre del prestatario.
+
+```sql
+CREATE VIEW vista_libros_prestados AS
+SELECT titulo, nombre AS autor, usuario_prestatario AS prestatario
+FROM prestamos NATURAL JOIN libros NATURAL JOIN autores;
+```
+
+### 8b. Conceder permisos de consulta sobre esta vista únicamente a usuario_biblio.
+
+```sql
+GRANT SELECT ON vista_libros_prestados TO usuario_biblio;
+```
+
+## 9. Funciones y consultas avanzadas
+
+### 9a. Crear una función que reciba el nombre de un autor y devuelva todos los libros escritos por él.
+
+```sql
+CREATE OR REPLACE FUNCTION libros_de(autor TEXT)
+RETURNS TABLE(
+    id_libro INTEGER,
+    titulo TEXT,
+    ano_publicacion INTEGER
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT l.id_libro, l.titulo, l.ano_publicacion
+    FROM libros l
+    WHERE l.id_autor IN (SELECT a.id_autor FROM autores a WHERE a.nombre = autor);
+END;
+$$ LANGUAGE plpgsql;
+```
+
+```sql
+SELECT * FROM libros_de('Isabel Allende');
+```
+
+Resultado:
+
+| id_libro | titulo                   | ano_publicacion |
+| -------- | ------------------------ | --------------- |
+| 3        | La casa de los espíritus | 1982            |
+| 4        | Paula                    | 1994            |
+
+### 9b. Crear una consulta que devuelva los tres libros más prestados.
+
+Insertamos más prestamos de prueba:
+
+```sql
+INSERT INTO prestamos (id_libro, fecha_prestamo, fecha_devolucion, usuario_prestatario) VALUES
+(3, '2025-09-01', '2025-09-15', 'Ana Pérez'),
+(8, '2025-09-12', '2025-09-22', 'Sofía Ramírez');
+```
+
+```sql
+SELECT *
+FROM libros
+WHERE id_libro IN (
+  SELECT id_libro
+  FROM prestamos
+  GROUP BY id_libro
+  ORDER BY COUNT(*) DESC
+  LIMIT 3);
+```
+
+Resultado:
+
+| id_libro | titulo                   | ano_publicacion | id_autor |
+| -------- | ------------------------ | --------------- | -------- |
+| 3        | La casa de los espíritus | 1982            | 2        |
+| 8        | Rayuela                  | 1963            | 5        |
+| 5        | Ficciones                | 1944            | 3        |
