@@ -344,3 +344,50 @@ Resultado:
 | 3        | La casa de los espíritus | 1982            | 2        |
 | 8        | Rayuela                  | 1963            | 5        |
 | 5        | Ficciones                | 1944            | 3        |
+
+## 10. Exportación e importación de datos
+
+### 10a. Exportar el contenido de la tabla libros a un archivo CSV.
+
+```sql
+COPY libros TO '/tmp/libros.csv' WITH CSV HEADER;
+```
+
+Resultado:
+
+```
+id_libro,titulo,ano_publicacion,id_autor
+2,El amor en los tiempos del cólera,1985,1
+3,La casa de los espíritus,1982,2
+4,Paula,1994,2
+5,Ficciones,1944,3
+6,La ciudad y los perros,1963,4
+7,Conversación en La Catedral,1969,4
+8,Rayuela,1963,5
+```
+
+### 10b. Importar datos adicionales de autores desde un archivo CSV externo.
+
+```sql
+COPY autores(nombre, nacionalidad) FROM '/tmp/autores_adicionales.csv' WITH CSV HEADER;
+```
+
+Resultado:
+
+| id_autor | nombre                 | nacionalidad   |
+| -------- | ---------------------- | -------------- |
+| 1        | Gabriel García Márquez | Colombiana     |
+| 2        | Isabel Allende         | Chilena        |
+| 3        | Jorge Luis Borges      | Argentina      |
+| 4        | Mario Vargas Llosa     | Peruana        |
+| 5        | Julio Cortázar         | Argentina      |
+| 6        | Paulo Coelho           | Brasileña      |
+| 7        | J.K. Rowling           | Británica      |
+| 8        | Stephen King           | Estadounidense |
+| 9        | Haruki Murakami        | Japonesa       |
+| 10       | Toni Morrison          | Estadounidense |
+| 11       | George Orwell          | Británico      |
+| 12       | Virginia Woolf         | Británica      |
+| 13       | Miguel de Cervantes    | Española       |
+| 14       | Franz Kafka            | Checa          |
+| 15       | Leo Tolstoy            | Rusa           |
